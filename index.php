@@ -39,9 +39,25 @@ function requireAdmin(): void {
 
 $action = $_GET['action'] ?? 'home';
 
-// Routes will be added as controllers are built
 switch ($action) {
+    case 'login':
+        (new AuthController())->showLogin();
+        break;
+    case 'login_post':
+        (new AuthController())->login();
+        break;
+    case 'register':
+        (new AuthController())->showRegister();
+        break;
+    case 'register_post':
+        (new AuthController())->register();
+        break;
+    case 'logout':
+        (new AuthController())->logout();
+        break;
+
     default:
-        echo '<h1>CinemaPHP — Coming soon</h1>';
+        // Redirect to login for now
+        header('Location: index.php?action=login');
         break;
 }
