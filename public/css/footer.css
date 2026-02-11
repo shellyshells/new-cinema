@@ -1,0 +1,7 @@
+.ft {
+    border-top: 1px solid var(--line);
+    text-align: center;
+    padding: 20px;
+    font-size: 0.8rem;
+    color: var(--ink-ghost);
+}
