@@ -1,0 +1,10 @@
+.card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--curve-lg);
+    padding: 24px;
+}
+
+.card-tight {
+    padding: 18px;
+}

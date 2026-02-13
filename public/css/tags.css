@@ -1,0 +1,33 @@
+.tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.tag-admin {
+    background: rgba(124,58,237,0.15);
+    color: var(--accent-bright);
+    border: 1px solid rgba(124,58,237,0.25);
+}
+
+.tag-user {
+    background: rgba(255,255,255,0.04);
+    color: var(--ink-faded);
+    border: 1px solid var(--line);
+}
+
+.tag-open {
+    background: rgba(52, 211, 153, 0.1);
+    color: var(--good);
+    border: 1px solid rgba(52, 211, 153, 0.15);
+}
+
+.tag-full {
+    background: rgba(248, 113, 113, 0.1);
+    color: var(--bad);
+    border: 1px solid rgba(248, 113, 113, 0.15);
+}
