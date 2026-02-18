@@ -1,0 +1,22 @@
+.admin-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+
+.admin-nav a {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink-faded);
+    border: 1px solid var(--line);
+}
+
+.admin-nav a:hover,
+.admin-nav a.on {
+    background: rgba(124,58,237,0.12);
+    color: var(--accent-bright);
+    border-color: var(--line-accent);
+}
