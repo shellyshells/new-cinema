@@ -75,4 +75,38 @@ class AuthController {
         setcookie('remember_email', '', time() - 3600, '/');
         header('Location: index.php?action=login');
     }
+
+    public function showProfile(): void {
+        requireLogin();
+        $user = $this->userModel->findById($_SESSION['user_id']);
+        require __DIR__ . '/../views/auth/profile.php';
+    }
+
+    public function updateProfile(): void {
+        requireLogin();
+        $username = trim($_POST['username'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $error = null;
+        $success = null;
+
+        if (!$username || !$email) {
+            $error = "Nom et email obligatoires.";
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "Email invalide.";
+        } else {
+            $this->userModel->update($_SESSION['user_id'], $username, $email, $password ?: null);
+            $_SESSION['username'] = $username;
+            $success = "Profil mis à jour.";
+        }
+        $user = $this->userModel->findById($_SESSION['user_id']);
+        require __DIR__ . '/../views/auth/profile.php';
+    }
+
+    public function deleteAccount(): void {
+        requireLogin();
+        $this->userModel->delete($_SESSION['user_id']);
+        session_destroy();
+        header('Location: index.php?action=login');
+    }
 }

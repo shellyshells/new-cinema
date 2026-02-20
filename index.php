@@ -64,6 +64,15 @@ switch ($action) {
     case 'logout':
         (new AuthController())->logout();
         break;
+    case 'profile':
+        (new AuthController())->showProfile();
+        break;
+    case 'update_profile':
+        (new AuthController())->updateProfile();
+        break;
+    case 'delete_account':
+        (new AuthController())->deleteAccount();
+        break;
 
     case 'movie':
         (new MovieController())->show();
