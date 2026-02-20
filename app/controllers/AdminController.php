@@ -63,6 +63,8 @@ class AdminController {
         $screenings = $this->screeningModel->getAll();
         $movies = $this->movieModel->getAll();
         $rooms = $this->roomModel->getAll();
+        $error = $_SESSION['screening_error'] ?? null;
+        unset($_SESSION['screening_error']);
         require __DIR__ . '/../views/admin/screenings.php';
     }
 
@@ -73,6 +75,22 @@ class AdminController {
         $time = $_POST['time'] ?? '';
         
         if ($movieId && $roomId && $date && $time) {
+            // Get movie duration for availability check
+            $movie = $this->movieModel->findById($movieId);
+            if (!$movie) {
+                $_SESSION['screening_error'] = "Film introuvable.";
+                header('Location: index.php?action=admin_screenings');
+                return;
+            }
+            
+            // Check room availability
+            if (!$this->screeningModel->isRoomAvailable($roomId, $date, $time, $movie['duration'])) {
+                $room = $this->roomModel->findById($roomId);
+                $_SESSION['screening_error'] = "La salle « " . $room['name'] . " » est déjà occupée à ce créneau horaire.";
+                header('Location: index.php?action=admin_screenings');
+                return;
+            }
+            
             $roomCapacity = $this->roomModel->getCapacity($roomId);
             $this->screeningModel->create($movieId, $roomId, $date, $time, $roomCapacity);
         }

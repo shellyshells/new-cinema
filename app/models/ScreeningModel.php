@@ -80,4 +80,60 @@ class ScreeningModel {
         );
         return $stmt->execute([$count, $id, $count]);
     }
+
+    /**
+     * Check if a room is available for a screening at a given date/time
+     * Considers movie duration to prevent overlapping screenings
+     */
+    public function isRoomAvailable(int $roomId, string $date, string $time, int $movieDuration, ?int $excludeScreeningId = null): bool {
+        // Calculate the end time of the proposed screening
+        $startTime = strtotime("$date $time");
+        $endTime = $startTime + ($movieDuration * 60); // duration in seconds
+        
+        // Find screenings in the same room on the same date
+        $sql = "SELECT s.screening_time, m.duration 
+                FROM screenings s 
+                JOIN movies m ON s.movie_id = m.id 
+                WHERE s.room_id = ? AND s.screening_date = ?";
+        $params = [$roomId, $date];
+        
+        if ($excludeScreeningId) {
+            $sql .= " AND s.id != ?";
+            $params[] = $excludeScreeningId;
+        }
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $existingScreenings = $stmt->fetchAll();
+        
+        foreach ($existingScreenings as $screening) {
+            $existingStart = strtotime("$date " . $screening['screening_time']);
+            $existingEnd = $existingStart + ($screening['duration'] * 60);
+            
+            // Check for overlap: new screening starts before existing ends AND new screening ends after existing starts
+            if ($startTime < $existingEnd && $endTime > $existingStart) {
+                return false; // Conflict found
+            }
+        }
+        
+        return true; // No conflicts
+    }
+
+    /**
+     * Get available rooms for a given date/time and movie duration
+     */
+    public function getAvailableRooms(string $date, string $time, int $movieDuration): array {
+        require_once __DIR__ . '/RoomModel.php';
+        $roomModel = new RoomModel();
+        $allRooms = $roomModel->getAll();
+        
+        $availableRooms = [];
+        foreach ($allRooms as $room) {
+            if ($this->isRoomAvailable($room['id'], $date, $time, $movieDuration)) {
+                $availableRooms[] = $room;
+            }
+        }
+        
+        return $availableRooms;
+    }
 }
